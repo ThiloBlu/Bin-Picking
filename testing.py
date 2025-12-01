@@ -73,8 +73,21 @@ newcameramatrix, roi = cv2.getOptimalNewCameraMatrix(intrinsic_matrix, calibrati
 
 print(newcameramatrix)
 
+calibration_data ={
+	'Undistorted intrinsic camera matrix' : newcameramatrix.tolist(),
+}
+
+print(calibration_data)
+
+output_path = os.path.expanduser('~/calibtration_images/undistorted_intrinsic_camera_matrix.json')
+with open(output_path, 'w', encoding='utf-8') as f:
+	json.dump(calibration_data, f)
+
 # undistort
 undistorted_image = cv2.undistort(img, intrinsic_matrix, calibration_coefficients, None, newcameramatrix)
+
+print(newcameramatrix[0][0])
+print(newcameramatrix[1][1])
  
 # crop the image
 x, y, w, h = roi
@@ -89,8 +102,6 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 ret, corners = cv2.findChessboardCorners(gray, pattern_size, None)
 
-print('corners:', corners)
-print('ret:', ret)
 
 cv2.imshow("Gray", gray)
 cv2.waitKey()
@@ -102,17 +113,26 @@ corners2 = cv2.cornerSubPix(gray, corners, winSize, zeroZone, criteria)
 
 cv2.drawChessboardCorners(img, (9,6), corners2, ret)
 cv2.imshow('img', img)
+output_path = os.path.expanduser('~/calibtration_images/determine_height_corners.jpg')
+if cv2.imwrite(output_path, img):
+	print(f"Bild erfolgreich gespeichert unter: {output_path}")
+else:
+	print(f"Fehler beim Speichern des Bildes unter: {output_path}")
+
 cv2.waitKey()
 
 
 
 first_point = np.array(corners[0])
 second_point = np.array(corners[9])
-print(first_point)
 
-Z_c = (620.53901329+620.50905728)/(2) * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
+Z_c = (newcameramatrix[1][1]+newcameramatrix[0][0])/(2) * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
+Z_cmax = newcameramatrix[1][1] * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
+Z_cmin = newcameramatrix[0][0] * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
 
 print(Z_c)
+print(Z_cmax-Z_c)
+print(Z_cmin - Z_c)
 
 #0.34316552906531683
 #0.5726654612345957
