@@ -126,15 +126,16 @@ cv2.waitKey()
 first_point = np.array(corners[0])
 second_point = np.array(corners[9])
 
-Z_c = (newcameramatrix[1][1]+newcameramatrix[0][0])/(2) * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
+Z_capprox = (newcameramatrix[1][1]+newcameramatrix[0][0])/(2) * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
 Z_cmax = newcameramatrix[1][1] * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
-Z_cmin = newcameramatrix[0][0] * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2)))  
+Z_cmin = newcameramatrix[0][0] * 0.025 /(np.sqrt(np.power((first_point[0][0]-second_point[0][0]),2)+np.power((first_point[0][1]-second_point[0][1]),2))) 
+
+Z_c = 0.025/(np.sqrt(np.power((first_point[0][0]-second_point[0][0])/newcameramatrix[0][0],2)+np.power((first_point[0][1]-second_point[0][1])/newcameramatrix[1][1],2)))
 
 print(Z_c)
-print(Z_cmax-Z_c)
-print(Z_cmin - Z_c)
 
 #0.34316552906531683
 #0.5726654612345957
 #0.5687302672979888
+#0.569028448768108
 
